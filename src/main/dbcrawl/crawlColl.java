@@ -1,12 +1,18 @@
 package main.dbcrawl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.json.simple.JSONObject;
+import org.jsoup.Jsoup;
+
+import main.TFIDF.Document;
 import main.jenahelper.JenaHelper;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 import connector.MONGODB;
@@ -83,6 +89,31 @@ public class crawlColl extends main.setting{
 		}
 		return res;
 	}
+	public double GetURLinfo(String url,int flag)
+	{
+		double res = 0;
+		DB db = null;
+		try
+		{
+			db = MONGODB.GetMongoDB();
+			DBCollection collCrawlTable = db.getCollection(collCrawl);
+			DBObject query = new BasicDBObject();
+			query.put("url",java.util.regex.Pattern.compile(url));
+			query.put("flag",flag);
+			
+			DBCursor cursor = collCrawlTable.find(query);
+		    while (cursor.hasNext()) {
+		    	DBObject currentObj = cursor.next();
+		    	System.out.println(Jsoup.parse(currentObj.get("content").toString()).text());
+		    	break;
+		    }
+		}
+		catch (Exception ex)
+		{
+			System.out.println(ex);
+		}
+		return res;
+	}
 	public double CountByFlag(int flag)
 	{
 		double res = 0;
@@ -113,6 +144,14 @@ public class crawlColl extends main.setting{
 		}
 	}
 	public static void main(String[] args) {
+		relevanCheck tes = new relevanCheck();
+		try {
+			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
+			tes.setUniq(uniq);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		ArrayList<String> urls = new ArrayList<String>();
 		urls.add("semarangkota.go.id");
 		urls.add("kebumenkab.go.id");
@@ -125,25 +164,34 @@ public class crawlColl extends main.setting{
 		urls.add("tegalkab.go.id");
 		urls.add("cilacapkab.go.id");
 		crawlColl x = new crawlColl("http://localhost/ta/www.owl","http://www.ta.com/#");
-		int i = 1;
-		for(String url : urls)
-		{
-			System.out.println(i+". Domain : "+url.toUpperCase());i++;
-			x.SetURL(url);
-			x.cEcCrawl();
-			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
-			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
-			System.out.println("belum tercrawling : "+x.CountByFlag(x.URL,1));
-			System.out.println("total halaman : "+x.getCountCrawlByUrl(x.URL));
-			System.out.println("=====================================");
-		}
-		double f1=x.CountByFlag(1),f2=x.CountByFlag(2),f3=x.CountByFlag(3),f0=x.CountByFlag(0);
-		System.out.println("TOTAL :");
-		System.out.println("belum tercrawling : "+f1);
-		System.out.println("terklasifikasi : "+f2);
-		System.out.println("tidak terklasifikasi : "+f3);
-		System.out.println("Belum tercrawling "+f0);
-		System.out.println("Keseluruhan "+ (f1+f2+f3+f0));
+		x.GetURLinfo("semarangkota.go.id",2);
+//		int i = 1;
+//		for(String url : urls)
+//		{
+//			System.out.println(i+". Domain : "+url.toUpperCase());i++;
+//			
+//		}
+//		CEK DETAIL
+//		crawlColl x = new crawlColl("http://localhost/ta/www.owl","http://www.ta.com/#");
+//		int i = 1;
+//		for(String url : urls)
+//		{
+//			System.out.println(i+". Domain : "+url.toUpperCase());i++;
+//			x.SetURL(url);
+//			x.cEcCrawl();
+//			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
+//			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
+//			System.out.println("belum tercrawling : "+x.CountByFlag(x.URL,1));
+//			System.out.println("total halaman : "+x.getCountCrawlByUrl(x.URL));
+//			System.out.println("=====================================");
+//		}
+//		double f1=x.CountByFlag(1),f2=x.CountByFlag(2),f3=x.CountByFlag(3),f0=x.CountByFlag(0);
+//		System.out.println("TOTAL :");
+//		System.out.println("belum tercrawling : "+f1);
+//		System.out.println("terklasifikasi : "+f2);
+//		System.out.println("tidak terklasifikasi : "+f3);
+//		System.out.println("Belum tercrawling "+f0);
+//		System.out.println("Keseluruhan "+ (f1+f2+f3+f0));
 		
 	}
 }

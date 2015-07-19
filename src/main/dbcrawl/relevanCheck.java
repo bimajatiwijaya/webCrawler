@@ -15,22 +15,12 @@ import main.jenahelper.JenaHelper;
 
 public class relevanCheck extends setting {
 	public HashMap<String,String> Comentar = new HashMap<String,String>();
-	public HashMap<String,String> WordUnique = new HashMap<String,String>();
+	public HashMap<String,Document> WordUnique = new HashMap<String,Document>();
 	Iterator<Entry<String, String>> ComentarIterator;
 	public relevanCheck()
 	{
 		JenaHelper temp = new JenaHelper(address,URI);
 		this.Comentar = temp.getDetailClass();
-	}
-	/**
-	 * 
-	 * @param value
-	 * cari kata unik tiap kelas
-	 * @return
-	 */
-	public HashMap<String,String> GetUniqueWord(HashMap<String,String> value)
-	{
-		return null;
 	}
 	public HashMap<String,Document> GetUniqueWord_2(HashMap<String,Document> value) throws Exception
 	{
@@ -75,6 +65,22 @@ public class relevanCheck extends setting {
 			}
 		}
 		return null;
+	}
+	public HashMap<String,Document> GetUniqueWord(HashMap<String,String> value) throws Exception
+	{
+		HashMap<String,Document> result = new HashMap<String,Document>();
+		Set<Entry<String, String>> setTempCom = value.entrySet();
+		Iterator<Entry<String, String>> ComIte = setTempCom.iterator();
+		while(ComIte.hasNext())
+		{
+			Map.Entry<String,String> dataComentar = (Map.Entry<String,String>)ComIte.next();
+			String compare = dataComentar.getValue();
+			Document CompareDoc = new Document(compare);
+			CompareDoc.DoPreProcess();
+			CompareDoc.indexing();
+			result.put(dataComentar.getKey(),CompareDoc);
+		}
+		return result;
 	}
 	public void readHM(HashMap<String,String> value)
 	{
@@ -123,14 +129,16 @@ public class relevanCheck extends setting {
 		}
 		return result;
 	}
+	public void setUniq(HashMap<String,Document> value)
+	{
+		this.WordUnique = value;
+	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		relevanCheck tes = new relevanCheck();
-		//HashMap<String,String> uniqs = tes.GetUniqueWord(tes.Comentar);
 		try {
-			HashMap<String,Document> cek = tes.ComentExcKey(tes.Comentar);
-			//tes.readHM_SD(cek);
-			tes.GetUniqueWord_2(cek);
+			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
+			tes.setUniq(uniq);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
