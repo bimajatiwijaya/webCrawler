@@ -53,29 +53,6 @@ public class myWebCrawler extends main.setting{
 		coment = jH.coment;
 		countclass = jH.clas.size();
 	}
-	public URL StringToURL(String url)
-	{
-		URI uri = null;
-		URL rest = null;
-		try
-		{
-			uri = new URI(url);
-		}catch(URISyntaxException e)
-		{
-			System.out.println("error in URI format: "+ url);
-		}
-		
-		try
-		{
-			if(uri!=null) rest = uri.toURL();
-		}catch(IllegalArgumentException e)
-		{
-			System.out.println(url +": invalid URL.. will not starting thread for this one!");
-		} catch (MalformedURLException badURL) {
-			System.out.println(url +": invalid URL.. will not starting thread for this one!");
-		}
-		return rest;
-	}
 	public String GetNextUrl() {
 		DBObject info = new BasicDBObject();
 		try
@@ -434,6 +411,12 @@ public class myWebCrawler extends main.setting{
 		}
 		return i;
 	}
+	/**
+	 * threads execute isunique function then insert new seed in same time  
+	 * @param domain
+	 * delete same url
+	 * 
+	 */
 	public void Delete(String domain) {
 		try
 		{

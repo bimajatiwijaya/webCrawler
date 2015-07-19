@@ -36,19 +36,19 @@ public class Main {
 //	    Scanner in = new Scanner(System.in);
 //	    startURL = in.nextLine();
 		/**
-		 * 	http://www.banyumaskab.go.id/ ======
 		 *  http://semarangkota.go.id/  =====
+		 *  kebumenkab.go.id =======
+			http://www.banyumaskab.go.id/ ======
 			http://pekalongankab.go.id/ =====
-			kebumenkab.go.id =======
+			
 			13. http://www.semarangkab.go.id/ ====
 			7. http://magelangkab.go.id/ === 72
 			11. http://rembangkab.go.id/ 503
-			http://batangkab.go.id/ XXX g iso
 			2. http://patikab.go.id/  ==paused==
 			10. http://tegalkab.go.id/ ==paused==
-			3. http://grobogan.go.id/ XXX
 			http://cilacapkab.go.id/v2/ ==53
-			5.  
+			http://batangkab.go.id/ XXX g iso  
+			3. http://grobogan.go.id/ XXX
 			6. http://www.karanganyarkab.go.id/  XXX
 			
 			

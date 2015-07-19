@@ -1,8 +1,6 @@
 package main.Crawler;
 
-import java.io.File;
 import java.net.URL;
-import java.util.Scanner;
 import java.util.Vector;
 
 import org.jsoup.Jsoup;
@@ -10,7 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class HtmlParse {
+public class HtmlParse extends main.setting{
 	protected Vector<String> extractLinks(String page,String PrimaryDomain,URL DomainCrawl)
 	{
 		Document doc = Jsoup.parse(page);
@@ -24,7 +22,11 @@ public class HtmlParse {
 			{
 				if(s.contains(PrimaryDomain))
 				{
-					bagOfLinks.addElement(s);	
+					URL temp = StringToURL(s);
+					if(DomainCrawl.toString()==temp.getHost().toString())
+					{
+						bagOfLinks.addElement(s);
+					}// to avoid url direction from sosial media like twitter.com/share=batangkab.go.id?dst
 				}else if(s.charAt(0)=='/'){
 					bagOfLinks.addElement(DomainCrawl+s.replaceFirst("/", ""));
 				}
@@ -54,19 +56,5 @@ public class HtmlParse {
 	public String getText(String html)
 	{
 		return Jsoup.parse(html).text();
-	}
-	public static void main(String[] args) throws Exception {
-		StringBuilder sb = new StringBuilder();
-		@SuppressWarnings("resource")
-		Scanner scanner = new Scanner(new File("C:/bima data/semester 6/kp/crawl_pekalongan_finished/id_crawl_84.html"));
-        scanner.useDelimiter("\r");
-        while(scanner.hasNext()){
-        	String value = scanner.next();
-            sb.append(value);
-        }
-		String a = sb.toString();
-		HtmlParse x = new HtmlParse();
-		System.out.println(x.getMetaContent(a));
-		//System.out.println(x.getText(x.getBody(a)));
 	}
 }

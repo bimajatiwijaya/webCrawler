@@ -112,28 +112,38 @@ public class crawlColl extends main.setting{
 			System.out.println(cl+" : "+cc);
 		}
 	}
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		ArrayList<String> urls = new ArrayList<String>();
 		urls.add("semarangkota.go.id");
 		urls.add("kebumenkab.go.id");
 		urls.add("banyumaskab.go.id");
 		urls.add("pekalongankab.go.id");
+		urls.add("www.semarangkab.go.id");
+		urls.add("magelangkab.go.id");
+		urls.add("rembangkab.go.id");
+		urls.add("patikab.go.id");
+		urls.add("tegalkab.go.id");
+		urls.add("cilacapkab.go.id");
 		crawlColl x = new crawlColl("http://localhost/ta/www.owl","http://www.ta.com/#");
+		int i = 1;
 		for(String url : urls)
 		{
+			System.out.println(i+". Domain : "+url.toUpperCase());i++;
 			x.SetURL(url);
 			x.cEcCrawl();
-			System.out.println(url);
-			System.out.println(x.CountByFlag(x.URL,3));
-			System.out.println(x.CountByFlag(x.URL,2));
-			System.out.println(x.CountByFlag(x.URL,1));
-			System.out.println(x.getCountCrawlByUrl(x.URL));
+			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
+			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
+			System.out.println("belum tercrawling : "+x.CountByFlag(x.URL,1));
+			System.out.println("total halaman : "+x.getCountCrawlByUrl(x.URL));
 			System.out.println("=====================================");
 		}
-		double f1=x.CountByFlag(1),f2=x.CountByFlag(2),f3=x.CountByFlag(3);
-		System.out.println(f1);
-		System.out.println(f2);
-		System.out.println(f3);
-		System.out.println(f1+f2+f3);
+		double f1=x.CountByFlag(1),f2=x.CountByFlag(2),f3=x.CountByFlag(3),f0=x.CountByFlag(0);
+		System.out.println("TOTAL :");
+		System.out.println("belum tercrawling : "+f1);
+		System.out.println("terklasifikasi : "+f2);
+		System.out.println("tidak terklasifikasi : "+f3);
+		System.out.println("Belum tercrawling "+f0);
+		System.out.println("Keseluruhan "+ (f1+f2+f3+f0));
+		
 	}
 }
