@@ -38,5 +38,6 @@ public class setting {
 		setting t = new setting();
 		System.out.println(t.StringToURL("http://www.facebook.com/share=www.banyumaskab.go.id/sdf/we/qw").getHost());
 		System.out.println(t.StringToURL("https://www.banyumaskab.go.id/sdfsdf/sdf/ew").getHost());
+		System.out.println("http://www.facebook.com/share=www.banyumaskab.go.id/sdf/we/qw".replaceAll("[^a-zA-Z ]", " ").toLowerCase());
 	}
 }

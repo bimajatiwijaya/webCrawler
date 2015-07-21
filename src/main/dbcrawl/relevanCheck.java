@@ -22,50 +22,7 @@ public class relevanCheck extends setting {
 		JenaHelper temp = new JenaHelper(address,URI);
 		this.Comentar = temp.getDetailClass();
 	}
-	public HashMap<String,Document> GetUniqueWord_2(HashMap<String,Document> value) throws Exception
-	{
-		HashMap<String,Document> result = new HashMap<String,Document>();
-		Set<Entry<String, Document>> setTemp = value.entrySet();
-		Iterator<Entry<String, Document>> itTemp = setTemp.iterator();
-		Set<Entry<String, String>> setTempCom = this.Comentar.entrySet();
-		this.ComentarIterator = setTempCom.iterator();
-		while(this.ComentarIterator.hasNext())
-		{
-			if(itTemp.hasNext()){
-				Map.Entry<String,String> dataComentar = (Map.Entry<String,String>)this.ComentarIterator.next();
-				Map.Entry<String,Document> data = (Map.Entry<String,Document>)itTemp.next();
-				String compare = dataComentar.getValue();
-				Document CompareDoc = new Document(compare);
-				if(data.getKey()==dataComentar.getKey()){
-					CompareDoc.DoPreProcess();
-					CompareDoc.indexing();
-					ArrayList<TF> tfc = CompareDoc.GetTerms();
-					ArrayList<TF> all = data.getValue().GetTerms();
-					System.out.println(tfc.size());
-					for(TF allt : all)
-					{
-						int i=0;
-						String Sallt = allt.GetTerm();
-						for(TF tc: tfc)
-						{
-							if(tc.GetTerm()==Sallt)
-							{
-								System.out.println("PODO");
-								tfc.remove(i);
-								break;
-							}
-							i++;
-						}
-					}
-					System.out.println("after "+tfc.size());
-					
-				}else{
-					System.out.println("bla");
-				}
-			}
-		}
-		return null;
-	}
+	
 	public HashMap<String,Document> GetUniqueWord(HashMap<String,String> value) throws Exception
 	{
 		HashMap<String,Document> result = new HashMap<String,Document>();
@@ -98,10 +55,11 @@ public class relevanCheck extends setting {
 		while(itTemp.hasNext()){
 			Map.Entry<String,Document> data = (Map.Entry<String,Document>)itTemp.next();
 			System.out.println(data.getKey()+" = "+data.getValue().GetTerms().size());
-//			for(TF temp : data.getValue().GetTerms())
-//			{
-//				System.out.print(temp.GetTerm()+" ");
-//			}
+			for(TF temp : data.getValue().GetTerms())
+			{
+				System.out.print(temp.GetTerm()+" ");
+			}
+			System.out.println();
 		}
 	}
 	public HashMap<String,Document> ComentExcKey(HashMap<String,String> value) throws Exception
@@ -125,7 +83,47 @@ public class relevanCheck extends setting {
 			Document temp = new Document(text.toString());
 			temp.DoPreProcess();
 			temp.indexing();
+//			System.out.println(temp.GetTerms().size());
 			result.put(dataComentar.getKey(),temp);
+		}
+		return result;
+	}
+	public HashMap<String,Document> GetUniqueWord_2(HashMap<String,Document> value) throws Exception
+	{
+		HashMap<String,Document> result = new HashMap<String,Document>();
+		Set<Entry<String, String>> setTempCom = this.Comentar.entrySet();
+		this.ComentarIterator = setTempCom.iterator();
+		while(this.ComentarIterator.hasNext())
+		{
+			Set<Entry<String, Document>> setTemp = value.entrySet();
+			Iterator<Entry<String, Document>> itTemp = setTemp.iterator();
+			Map.Entry<String,String> dataComentar = (Map.Entry<String,String>)this.ComentarIterator.next();
+			while(itTemp.hasNext())
+			{
+				Map.Entry<String,Document> data = (Map.Entry<String,Document>)itTemp.next();
+				String compare = dataComentar.getValue();
+				Document CompareDoc = new Document(compare);
+				if(data.getKey()==dataComentar.getKey()){
+					CompareDoc.DoPreProcess();
+					CompareDoc.indexing();
+					ArrayList<TF> all = data.getValue().GetTerms();
+					for(TF allt : all)
+					{
+						int i=0;
+						String Sallt = allt.GetTerm();
+						for(TF tc: CompareDoc.GetTerms())
+						{
+							if(tc.GetTerm().equals(Sallt))
+							{
+								CompareDoc.GetTerms().remove(i);
+								break;
+							}
+							i++;
+						}
+					}
+					result.put(dataComentar.getKey(), CompareDoc);
+				}
+			}
 		}
 		return result;
 	}
@@ -137,8 +135,19 @@ public class relevanCheck extends setting {
 		// TODO Auto-generated method stub
 		relevanCheck tes = new relevanCheck();
 		try {
-			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
-			tes.setUniq(uniq);
+			
+			HashMap<String,Document> uniq = tes.ComentExcKey(tes.Comentar);
+			HashMap<String,Document> uniq2 = tes.GetUniqueWord_2(uniq);
+			
+//			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
+			tes.readHM_SD(uniq2);
+			tes.setUniq(uniq2);
+			System.out.println("---------");
+			Document temp = tes.WordUnique.get("bidang_koperasi_dan_usaha_kecil_dan_menengah");
+			for(TF s : temp.GetTerms())
+			{
+				System.out.print(s.GetTerm()+" ");
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

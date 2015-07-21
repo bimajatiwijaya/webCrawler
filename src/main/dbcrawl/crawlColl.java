@@ -1,12 +1,24 @@
 package main.dbcrawl;
 
+import java.io.Console;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.ConsoleHandler;
 
+import org.apache.jena.atlas.io.NullOutputStream;
+import org.apache.jena.atlas.lib.NumberUtils;
+import org.apache.jena.atlas.logging.java.ConsoleHandlerStdout;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import main.TFIDF.Document;
+import main.TFIDF.TF;
 import main.jenahelper.JenaHelper;
 
 import com.mongodb.BasicDBObject;
@@ -89,24 +101,75 @@ public class crawlColl extends main.setting{
 		}
 		return res;
 	}
-	public double GetURLinfo(String url,int flag)
+	public Double[] GetURLinfo(String url,int flag)
 	{
-		double res = 0;
+		Double res[] = {0.0,0.0};
 		DB db = null;
 		try
 		{
+			relevanCheck tes = new relevanCheck();
 			db = MONGODB.GetMongoDB();
 			DBCollection collCrawlTable = db.getCollection(collCrawl);
 			DBObject query = new BasicDBObject();
 			query.put("url",java.util.regex.Pattern.compile(url));
 			query.put("flag",flag);
-			
 			DBCursor cursor = collCrawlTable.find(query);
+			int relevan = 0;
+			int count = 0;
 		    while (cursor.hasNext()) {
 		    	DBObject currentObj = cursor.next();
-		    	System.out.println(Jsoup.parse(currentObj.get("content").toString()).text());
-		    	break;
+		    	StringBuilder sb = new StringBuilder();
+		    	org.jsoup.nodes.Document doc = Jsoup.parse(currentObj.get("content").toString());
+		    	Elements meta = doc.select("meta[name=keywords]");
+				if(meta.size()==0){
+					meta = doc.select("meta[name=description]");
+				}
+				if(meta.size()>0){
+					for(Element o: meta){
+						sb.append(o.attr("content").toString()+",");
+					}
+				}
+				Elements Ebody = doc.select("body");
+		    	String body = Jsoup.parse(Ebody.toString()).text();
+		    	sb.append(body+" "+currentObj.get("url").toString());
+		    	Document Dbody = new Document(sb.toString());
+		    	Dbody.DoPreProcess();
+		    	Dbody.indexing();
+		    	
+				try {
+					HashMap<String,Document> AllComentExc = tes.ComentExcKey(tes.Comentar);
+					HashMap<String,Document> uniq = tes.GetUniqueWord_2(AllComentExc);
+					tes.setUniq(uniq);
+					Document temp = tes.WordUnique.get(currentObj.get("kategori").toString());
+					int exist = 0;
+					for(TF tdb : Dbody.GetTerms())
+					{
+						for(TF s : temp.GetTerms())
+						{
+							if(tdb.GetTerm().equals(s.GetTerm())){
+								exist=exist+tdb.GetFrequency();
+								break;
+							}
+						}
+					}
+					//System.out.println("cocok "+exist);
+					if(exist>0){
+						relevan++;
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				count++;
+				System.out.println((count*1.0/cursor.size())*100+"%");
 		    }
+//		    System.out.println(cursor.size());
+//		    System.out.println(relevan);
+//		    if(relevan>0){
+//		    double prosentase = (relevan*1.0/cursor.size())*100;
+//		    System.out.println(prosentase);}
+		    res[0] = cursor.size()*1.0;
+		    res[1] = relevan*1.0;
 		}
 		catch (Exception ex)
 		{
@@ -154,17 +217,37 @@ public class crawlColl extends main.setting{
 		}
 		ArrayList<String> urls = new ArrayList<String>();
 		urls.add("semarangkota.go.id");
-		urls.add("kebumenkab.go.id");
-		urls.add("banyumaskab.go.id");
-		urls.add("pekalongankab.go.id");
-		urls.add("www.semarangkab.go.id");
-		urls.add("magelangkab.go.id");
-		urls.add("rembangkab.go.id");
-		urls.add("patikab.go.id");
-		urls.add("tegalkab.go.id");
-		urls.add("cilacapkab.go.id");
+//		urls.add("kebumenkab.go.id");
+//		urls.add("banyumaskab.go.id");
+//		urls.add("pekalongankab.go.id");
+//		urls.add("www.semarangkab.go.id");
+//		urls.add("magelangkab.go.id");
+//		urls.add("rembangkab.go.id");
+//		urls.add("patikab.go.id");
+//		urls.add("tegalkab.go.id");
+//		urls.add("cilacapkab.go.id");
 		crawlColl x = new crawlColl("http://localhost/ta/www.owl","http://www.ta.com/#");
-		x.GetURLinfo("semarangkota.go.id",2);
+		ArrayList<Double[]> result = new ArrayList<Double[]>(); 
+		for(String url : urls)
+		{
+			result.add(x.GetURLinfo(url,2));
+			 try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		int i=0;
+		for(String url : urls)
+		{
+			System.out.println(url.toUpperCase());
+			Double temp[] = result.get(i);
+			System.out.println("Total relevan(original) : "+temp[0]);
+			System.out.println("Total relevan(check) : "+temp[1]);
+			System.out.println("Prosentase : "+String.format("%,3f", (temp[1]/temp[0])*100)+" % (relevan)");
+			i++;
+		}
 //		int i = 1;
 //		for(String url : urls)
 //		{
