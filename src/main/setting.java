@@ -6,8 +6,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class setting {
-	public static final String collCrawl = "crawlcoll";
-//	public static final String collCrawl = "testcrawl";
+//	public static final String collCrawl = "crawlcoll";
+	public static final String collCrawl = "testcrawl";
 	public static final double minRel = 0.27;
 	public static final String address = "http://localhost/ta/www.owl";
 	public static final String URI = "http://www.ta.com/#";
@@ -33,11 +33,5 @@ public class setting {
 			System.out.println(url +": invalid URL.. will not starting thread for this one!");
 		}
 		return rest;
-	}
-	public static void main(String[] args) {
-		setting t = new setting();
-		System.out.println(t.StringToURL("http://www.facebook.com/share=www.banyumaskab.go.id/sdf/we/qw").getHost());
-		System.out.println(t.StringToURL("https://www.banyumaskab.go.id/sdfsdf/sdf/ew").getHost());
-		System.out.println("http://www.facebook.com/share=www.banyumaskab.go.id/sdf/we/qw".replaceAll("[^a-zA-Z ]", " ").toLowerCase());
 	}
 }

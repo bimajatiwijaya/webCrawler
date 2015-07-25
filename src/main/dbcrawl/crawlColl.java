@@ -108,6 +108,8 @@ public class crawlColl extends main.setting{
 		try
 		{
 			relevanCheck tes = new relevanCheck();
+			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
+			tes.setUniq(uniq);
 			db = MONGODB.GetMongoDB();
 			DBCollection collCrawlTable = db.getCollection(collCrawl);
 			DBObject query = new BasicDBObject();
@@ -117,51 +119,71 @@ public class crawlColl extends main.setting{
 			int relevan = 0;
 			int count = 0;
 		    while (cursor.hasNext()) {
+		    	int exist = 0;
 		    	DBObject currentObj = cursor.next();
 		    	StringBuilder sb = new StringBuilder();
 		    	org.jsoup.nodes.Document doc = Jsoup.parse(currentObj.get("content").toString());
-		    	Elements meta = doc.select("meta[name=keywords]");
-				if(meta.size()==0){
-					meta = doc.select("meta[name=description]");
-				}
-				if(meta.size()>0){
-					for(Element o: meta){
-						sb.append(o.attr("content").toString()+",");
-					}
-				}
-				Elements Ebody = doc.select("body");
-		    	String body = Jsoup.parse(Ebody.toString()).text();
-		    	sb.append(body+" "+currentObj.get("url").toString());
-		    	Document Dbody = new Document(sb.toString());
-		    	Dbody.DoPreProcess();
-		    	Dbody.indexing();
-		    	
-				try {
-					HashMap<String,Document> AllComentExc = tes.ComentExcKey(tes.Comentar);
-					HashMap<String,Document> uniq = tes.GetUniqueWord_2(AllComentExc);
-					tes.setUniq(uniq);
-					Document temp = tes.WordUnique.get(currentObj.get("kategori").toString());
-					int exist = 0;
-					for(TF tdb : Dbody.GetTerms())
-					{
-						for(TF s : temp.GetTerms())
-						{
-							if(tdb.GetTerm().equals(s.GetTerm())){
-								exist=exist+tdb.GetFrequency();
-								break;
+		    	Document temp = tes.WordUnique.get(currentObj.get("kategori").toString());
+		    	Elements Etitle = doc.select("title");
+		    	if(Etitle.size()>0){
+		    		String title = Jsoup.parse(Etitle.toString()).text();
+		    		if(title!=null){
+				    	Document Dtitle = new Document(title);
+				    	Dtitle.DoPreProcess();
+				    	Dtitle.indexing();
+				    	if(Dtitle.GetTerms()!=null){
+				    	for(TF tdb : Dtitle.GetTerms())
+				    	{
+				    		for(TF s : temp.GetTerms())
+							{
+								if(tdb.GetTerm().equals(s.GetTerm())){
+									exist=10;
+									break;
+								}
 							}
+				    	}}
+			    	}
+		    	}
+		    	if(exist==10){
+		    		relevan++;
+		    	}
+		    	else {
+			    	Elements meta = doc.select("meta[name=keywords]");
+					if(meta.size()==0){
+						meta = doc.select("meta[name=description]");
+					}
+					if(meta.size()>0){
+						for(Element o: meta){
+							sb.append(o.attr("content").toString()+",");
 						}
 					}
-					//System.out.println("cocok "+exist);
-					if(exist>0){
-						relevan++;
+					Elements Ebody = doc.select("body");
+			    	String body = Jsoup.parse(Ebody.toString()).text();
+			    	sb.append(body+" "+currentObj.get("url").toString());
+			    	Document Dbody = new Document(sb.toString());
+			    	Dbody.DoPreProcess();
+			    	Dbody.indexing();
+					try {
+						for(TF tdb : Dbody.GetTerms())
+						{
+							for(TF s : temp.GetTerms())
+							{
+								if(tdb.GetTerm().equals(s.GetTerm())){
+									exist=exist+tdb.GetFrequency();
+								}
+							}
+						}
+//						System.out.println("cocok "+exist);
+						if(exist>=5){
+							relevan++;
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				count++;
-				System.out.println((count*1.0/cursor.size())*100+"%");
+					count++;
+					System.out.println((count*1.0/cursor.size())*100+"%");
+			    }
 		    }
 //		    System.out.println(cursor.size());
 //		    System.out.println(relevan);
@@ -207,74 +229,75 @@ public class crawlColl extends main.setting{
 		}
 	}
 	public static void main(String[] args) {
-		relevanCheck tes = new relevanCheck();
-		try {
-			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
-			tes.setUniq(uniq);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		relevanCheck tes = new relevanCheck();
+//		try {
+//			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
+//			tes.setUniq(uniq);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		ArrayList<String> urls = new ArrayList<String>();
 		urls.add("semarangkota.go.id");
-//		urls.add("kebumenkab.go.id");
-//		urls.add("banyumaskab.go.id");
-//		urls.add("pekalongankab.go.id");
-//		urls.add("www.semarangkab.go.id");
-//		urls.add("magelangkab.go.id");
-//		urls.add("rembangkab.go.id");
-//		urls.add("patikab.go.id");
-//		urls.add("tegalkab.go.id");
-//		urls.add("cilacapkab.go.id");
+		urls.add("kebumenkab.go.id");
+		urls.add("banyumaskab.go.id");
+		urls.add("pekalongankab.go.id");
+		urls.add("semarangkab.go.id");
+		urls.add("magelangkab.go.id");
+		urls.add("rembangkab.go.id");
+		urls.add("patikab.go.id");
+		urls.add("tegalkab.go.id");
+		urls.add("cilacapkab.go.id");
 		crawlColl x = new crawlColl("http://localhost/ta/www.owl","http://www.ta.com/#");
 		ArrayList<Double[]> result = new ArrayList<Double[]>(); 
-		for(String url : urls)
-		{
-			result.add(x.GetURLinfo(url,2));
-			 try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		int i=0;
-		for(String url : urls)
-		{
-			System.out.println(url.toUpperCase());
-			Double temp[] = result.get(i);
-			System.out.println("Total relevan(original) : "+temp[0]);
-			System.out.println("Total relevan(check) : "+temp[1]);
-			System.out.println("Prosentase : "+String.format("%,3f", (temp[1]/temp[0])*100)+" % (relevan)");
-			i++;
-		}
+		int i = 0;
+//		for(String url : urls)
+//		{
+//			result.add(x.GetURLinfo(url,2));
+//			 try {
+//				Thread.sleep(3000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		for(String url : urls)
+//		{
+//			System.out.println(url.toUpperCase());
+//			Double temp[] = result.get(i);
+//			System.out.println("Total relevan(original) : "+temp[0]);
+//			System.out.println("Total relevan(check) : "+temp[1]);
+//			System.out.println("Prosentase : "+String.format("%,2f", (temp[1]/temp[0])*100)+" % (relevan)");
+//			i++;
+//		}
 //		int i = 1;
 //		for(String url : urls)
 //		{
 //			System.out.println(i+". Domain : "+url.toUpperCase());i++;
 //			
 //		}
-//		CEK DETAIL
-//		crawlColl x = new crawlColl("http://localhost/ta/www.owl","http://www.ta.com/#");
-//		int i = 1;
-//		for(String url : urls)
-//		{
-//			System.out.println(i+". Domain : "+url.toUpperCase());i++;
-//			x.SetURL(url);
-//			x.cEcCrawl();
-//			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
-//			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
-//			System.out.println("belum tercrawling : "+x.CountByFlag(x.URL,1));
-//			System.out.println("total halaman : "+x.getCountCrawlByUrl(x.URL));
-//			System.out.println("=====================================");
-//		}
-//		double f1=x.CountByFlag(1),f2=x.CountByFlag(2),f3=x.CountByFlag(3),f0=x.CountByFlag(0);
-//		System.out.println("TOTAL :");
-//		System.out.println("belum tercrawling : "+f1);
-//		System.out.println("terklasifikasi : "+f2);
-//		System.out.println("tidak terklasifikasi : "+f3);
-//		System.out.println("Belum tercrawling "+f0);
-//		System.out.println("Keseluruhan "+ (f1+f2+f3+f0));
-		
+		//CEK DETAIL
+		i=1;
+		System.out.println("\n\n");
+		for(String url : urls)
+		{
+			System.out.println(i+". Domain : "+url.toUpperCase());i++;
+			x.SetURL(url);
+			//x.cEcCrawl();
+			System.out.println("paused : "+x.CountByFlag(x.URL,1));
+			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
+			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
+			System.out.println("belum tercrawling : "+x.CountByFlag(x.URL,0));
+			System.out.println("total halaman : "+x.getCountCrawlByUrl(x.URL));
+			System.out.println("=====================================");
+		}
+		double f1=x.CountByFlag(1),f2=x.CountByFlag(2),f3=x.CountByFlag(3),f0=x.CountByFlag(0);
+		System.out.println("TOTAL :");
+		System.out.println("paused : "+f1);
+		System.out.println("terklasifikasi : "+f2);
+		System.out.println("tidak terklasifikasi : "+f3);
+		System.out.println("Belum tercrawling "+f0);
+		System.out.println("Keseluruhan "+ (f1+f2+f3+f0));
+//		
 	}
 }

@@ -141,13 +141,13 @@ public class relevanCheck extends setting {
 			
 //			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
 			tes.readHM_SD(uniq2);
-			tes.setUniq(uniq2);
-			System.out.println("---------");
-			Document temp = tes.WordUnique.get("bidang_koperasi_dan_usaha_kecil_dan_menengah");
-			for(TF s : temp.GetTerms())
-			{
-				System.out.print(s.GetTerm()+" ");
-			}
+//			tes.setUniq(uniq2);
+//			System.out.println("---------");
+//			Document temp = tes.WordUnique.get("bidang_koperasi_dan_usaha_kecil_dan_menengah");
+//			for(TF s : temp.GetTerms())
+//			{
+//				System.out.print(s.GetTerm()+" ");
+//			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

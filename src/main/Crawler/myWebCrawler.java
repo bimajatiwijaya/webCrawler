@@ -102,7 +102,7 @@ public class myWebCrawler extends main.setting{
 		String[] doc = new String[3];
 		HtmlParse phhelp = new HtmlParse();
 		String seedToCrawl = GetNextUrl();
-		if(seedToCrawl==null){Thread.sleep(10000); if(GetNextUrl()!=null){crawl();}else{System.out.println("finished");}}
+		if(seedToCrawl==null){Thread.sleep(30000); if(GetNextUrl()!=null){crawl();}else{System.out.println("finished");}}
 		else{
 			JSONObject parse = (JSONObject) JSONValue.parse(seedToCrawl);
 			//info webtocrawl

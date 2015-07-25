@@ -7,39 +7,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import main.Crawler.myWebCrawler;
-
+// https://github.com/bimajatiwijaya/webCrawler.git
 public class Main {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
-//		String startURL = null;
-//	    Scanner in = new Scanner(System.in);
-//	    startURL = in.nextLine();
-		/**
-		 *  http://semarangkota.go.id/  =====
-		 *  kebumenkab.go.id =======
-			http://www.banyumaskab.go.id/ ======
-			http://pekalongankab.go.id/ =====
-			
-			13. http://www.semarangkab.go.id/ ====
-			7. http://magelangkab.go.id/ === 72
-			11. http://rembangkab.go.id/ 503
-			2. http://patikab.go.id/  ==paused==
-			10. http://tegalkab.go.id/ ==paused==
-			http://cilacapkab.go.id/v2/ ==53
-			http://batangkab.go.id/ XXX g iso  
-			3. http://grobogan.go.id/ XXX
-			6. http://www.karanganyarkab.go.id/  XXX
-			
-			
-			 
-			
-			12. http://sukoharjokab.go.id/  XXX
-			
-			
-		 */
-		myWebCrawler agent = new myWebCrawler("http://cilacapkab.go.id/v2/");
+		String startURL = null;
+	    Scanner in = new Scanner(System.in);
+	    startURL = in.nextLine();
+		myWebCrawler agent = new myWebCrawler(startURL);
 		ExecutorService threadPool;
-		int t = 1;
+		int t = 50;
 		threadPool = Executors.newFixedThreadPool(t);
 		   // submit jobs to be executing by the pool
 		   for (int i = 0; i < t; i++) {
