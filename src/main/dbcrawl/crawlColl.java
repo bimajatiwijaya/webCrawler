@@ -1,18 +1,8 @@
 package main.dbcrawl;
 
-import java.io.Console;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.ConsoleHandler;
 
-import org.apache.jena.atlas.io.NullOutputStream;
-import org.apache.jena.atlas.lib.NumberUtils;
-import org.apache.jena.atlas.logging.java.ConsoleHandlerStdout;
-import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -101,9 +91,17 @@ public class crawlColl extends main.setting{
 		}
 		return res;
 	}
+	/**
+	 * 
+	 * @param url
+	 * @param flag
+	 * @return double[] {total page ,relevant total}
+	 * relevant when in title exist minimal 1 keyword or minimalKeyword in tag body
+	 */
 	public Double[] GetURLinfo(String url,int flag)
 	{
 		Double res[] = {0.0,0.0};
+		int minimalKeyword = 5;
 		DB db = null;
 		try
 		{
@@ -137,14 +135,14 @@ public class crawlColl extends main.setting{
 				    		for(TF s : temp.GetTerms())
 							{
 								if(tdb.GetTerm().equals(s.GetTerm())){
-									exist=10;
+									exist=minimalKeyword;
 									break;
 								}
 							}
 				    	}}
 			    	}
 		    	}
-		    	if(exist==10){
+		    	if(exist==minimalKeyword){
 		    		relevan++;
 		    	}
 		    	else {
@@ -173,23 +171,17 @@ public class crawlColl extends main.setting{
 								}
 							}
 						}
-//						System.out.println("cocok "+exist);
-						if(exist>=5){
+//						System.out.println("relevant count : "+exist);
+						if(exist>=minimalKeyword){
 							relevan++;
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					count++;
-					System.out.println((count*1.0/cursor.size())*100+"%");
+					System.out.println((count*1.0/cursor.size())*100+"%"); // show loading process in cmd
 			    }
 		    }
-//		    System.out.println(cursor.size());
-//		    System.out.println(relevan);
-//		    if(relevan>0){
-//		    double prosentase = (relevan*1.0/cursor.size())*100;
-//		    System.out.println(prosentase);}
 		    res[0] = cursor.size()*1.0;
 		    res[1] = relevan*1.0;
 		}
@@ -229,14 +221,6 @@ public class crawlColl extends main.setting{
 		}
 	}
 	public static void main(String[] args) {
-//		relevanCheck tes = new relevanCheck();
-//		try {
-//			HashMap<String,Document> uniq = tes.GetUniqueWord(tes.Comentar);
-//			tes.setUniq(uniq);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		ArrayList<String> urls = new ArrayList<String>();
 		urls.add("semarangkota.go.id");
 		urls.add("kebumenkab.go.id");
@@ -249,8 +233,11 @@ public class crawlColl extends main.setting{
 		urls.add("tegalkab.go.id");
 		urls.add("cilacapkab.go.id");
 		crawlColl x = new crawlColl("http://localhost/ta/www.owl","http://www.ta.com/#");
-		ArrayList<Double[]> result = new ArrayList<Double[]>(); 
 		int i = 0;
+/**
+ * 		RELEVANT CHECK
+ */
+//		ArrayList<Double[]> result = new ArrayList<Double[]>(); 
 //		for(String url : urls)
 //		{
 //			result.add(x.GetURLinfo(url,2));
@@ -270,20 +257,15 @@ public class crawlColl extends main.setting{
 //			System.out.println("Prosentase : "+String.format("%,2f", (temp[1]/temp[0])*100)+" % (relevan)");
 //			i++;
 //		}
-//		int i = 1;
-//		for(String url : urls)
-//		{
-//			System.out.println(i+". Domain : "+url.toUpperCase());i++;
-//			
-//		}
-		//CEK DETAIL
+		
+//		CHECK DETAILS
 		i=1;
 		System.out.println("\n\n");
 		for(String url : urls)
 		{
 			System.out.println(i+". Domain : "+url.toUpperCase());i++;
 			x.SetURL(url);
-			//x.cEcCrawl();
+			//x.cEcCrawl(); // show detail each class
 			System.out.println("paused : "+x.CountByFlag(x.URL,1));
 			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
 			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
@@ -298,6 +280,5 @@ public class crawlColl extends main.setting{
 		System.out.println("tidak terklasifikasi : "+f3);
 		System.out.println("Belum tercrawling "+f0);
 		System.out.println("Keseluruhan "+ (f1+f2+f3+f0));
-//		
 	}
 }

@@ -23,10 +23,10 @@ public class HtmlParse extends main.setting{
 				if(s.contains(PrimaryDomain))
 				{
 					URL temp = StringToURL(s);
-					if(DomainCrawl.toString()==temp.getHost().toString())
+					if(DomainCrawl.toString()==temp.getHost().toString())// to avoid url direction from sosial media like twitter.com/share=batangkab.go.id?dst
 					{
 						bagOfLinks.addElement(s);
-					}// to avoid url direction from sosial media like twitter.com/share=batangkab.go.id?dst
+					}
 				}else if(s.charAt(0)=='/'){
 					bagOfLinks.addElement(DomainCrawl+s.replaceFirst("/", ""));
 				}

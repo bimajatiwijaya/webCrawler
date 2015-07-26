@@ -1,7 +1,5 @@
 package testing;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,7 +14,7 @@ public class Main {
 	    startURL = in.nextLine();
 		myWebCrawler agent = new myWebCrawler(startURL);
 		ExecutorService threadPool;
-		int t = 50;
+		int t = 20;
 		threadPool = Executors.newFixedThreadPool(t);
 		   // submit jobs to be executing by the pool
 		   for (int i = 0; i < t; i++) {
