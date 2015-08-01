@@ -102,7 +102,7 @@ public class TFIDFweighting extends DocumentWeighting{
 		for(int i=0;i<len;i++)
 		{
 			//this.termsAllDocument.get(i).SetIDF(this.docCount*1.0,this.df.get(i));
-			this.IDF.add(Math.log10(this.docCount / this.df.get(i) * 1.0));
+			this.IDF.add(Math.log10(this.docCount* 1.0 / this.df.get(i)));
 		}
 	}
 	public void PrintTermsDoc(int i)
@@ -139,7 +139,11 @@ public class TFIDFweighting extends DocumentWeighting{
 			ArrayList<Double> x = new ArrayList<Double>(this.termsAllDocument.size());
 			for(Double prin : this.w.get(i))
 			{
-				x.add(prin.doubleValue()/this.vectorNorm.get(i));
+				if(prin.doubleValue()==0){
+					x.add(0.0);
+				}else{
+					x.add(prin.doubleValue()/this.vectorNorm.get(i));
+				}
 			}
 			this.wNormal.add(x);
 		}
@@ -219,7 +223,11 @@ public class TFIDFweighting extends DocumentWeighting{
 	{
 		for(Double prin : this.wQ)
 		{
-			this.wNQ.add(prin.doubleValue()/this.DividerQ);
+			if(this.DividerQ==0){
+				this.wNQ.add(1.0);
+			}else{
+				this.wNQ.add(prin.doubleValue()/this.DividerQ);
+			}			
 		}
 	}
 	protected void CalcWeightQ() // sekalian weight normalisasi
@@ -282,7 +290,7 @@ public class TFIDFweighting extends DocumentWeighting{
 					a += (wdn.doubleValue() * this.wNQ.get(j));
 					j++;
 				}
-				this.cos[i] = a / Math.sqrt(this.devNorm.get(i)*this.DividerQN);
+				this.cos[i] = a / Math.sqrt(this.devNorm.get(i)*this.DividerQN); 
 			}
 			return true;
 		}else

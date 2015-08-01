@@ -217,7 +217,7 @@ public class crawlColl extends main.setting{
 		for(String cl : this.Classes)
 		{
 			double cc = getCountCrawlByUrlAndClass(this.URL, cl);
-			System.out.println(cl+" : "+cc);
+			System.out.println(cl+" : "+(int)cc);
 		}
 	}
 	public static void main(String[] args) {
@@ -263,9 +263,9 @@ public class crawlColl extends main.setting{
 		System.out.println("\n\n");
 		for(String url : urls)
 		{
-			System.out.println(i+". Domain : "+url.toUpperCase());i++;
+			System.out.println(i+". "+url.toUpperCase());i++;
 			x.SetURL(url);
-			//x.cEcCrawl(); // show detail each class
+			x.cEcCrawl(); // show detail each class
 			System.out.println("paused : "+x.CountByFlag(x.URL,1));
 			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
 			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
