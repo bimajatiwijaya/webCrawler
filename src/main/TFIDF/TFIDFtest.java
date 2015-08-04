@@ -4,9 +4,10 @@ public class TFIDFtest {
 
 	public static void main(String[] args) throws Exception {
 		String KeyWord = "udinus jawa tengah";
-		String[] text = new String[2];
+		String[] text = new String[3];
 		text[0] = "baik jawa tengah udinus";
 		text[1] = "jawa tengah universitas";
+		text[2] = "udinus jawa tengah";
 		TFIDFweighting a = new TFIDFweighting(text);
 		a.buildVSM();
 		a.printDF();

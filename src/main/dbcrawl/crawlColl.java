@@ -2,11 +2,13 @@ package main.dbcrawl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import main.Crawler.myWebCrawler;
 import main.TFIDF.Document;
 import main.TFIDF.TF;
 import main.jenahelper.JenaHelper;
@@ -259,20 +261,24 @@ public class crawlColl extends main.setting{
 //		}
 		
 //		CHECK DETAILS
-		i=1;
-		System.out.println("\n\n");
-		for(String url : urls)
-		{
-			System.out.println(i+". "+url.toUpperCase());i++;
-			x.SetURL(url);
-			x.cEcCrawl(); // show detail each class
-			System.out.println("paused : "+x.CountByFlag(x.URL,1));
-			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
-			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
-			System.out.println("belum tercrawling : "+x.CountByFlag(x.URL,0));
-			System.out.println("total halaman : "+x.getCountCrawlByUrl(x.URL));
-			System.out.println("=====================================");
-		}
+//		i=1;
+//		System.out.println("\n\n");
+//		for(String url : urls)
+//		{
+//			System.out.println(i+". "+url.toUpperCase());i++;
+//			x.SetURL(url);
+//			x.cEcCrawl(); // show detail each class
+//			System.out.println("paused : "+x.CountByFlag(x.URL,1));
+//			System.out.println("tidak terklasifikasi : "+x.CountByFlag(x.URL,3));
+//			System.out.println("terklasifikasi : "+x.CountByFlag(x.URL,2));
+//			System.out.println("belum tercrawling : "+x.CountByFlag(x.URL,0));
+//			System.out.println("total halaman : "+x.getCountCrawlByUrl(x.URL));
+//			System.out.println("=====================================");
+//		}
+		String startURL = null;
+	    Scanner in = new Scanner(System.in);
+	    startURL = in.nextLine();
+	    //switch()
 		double f1=x.CountByFlag(1),f2=x.CountByFlag(2),f3=x.CountByFlag(3),f0=x.CountByFlag(0);
 		System.out.println("TOTAL :");
 		System.out.println("paused : "+f1);

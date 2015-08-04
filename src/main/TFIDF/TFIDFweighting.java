@@ -139,7 +139,7 @@ public class TFIDFweighting extends DocumentWeighting{
 			ArrayList<Double> x = new ArrayList<Double>(this.termsAllDocument.size());
 			for(Double prin : this.w.get(i))
 			{
-				if(prin.doubleValue()==0){
+				if(this.vectorNorm.get(i)==0){
 					x.add(0.0);
 				}else{
 					x.add(prin.doubleValue()/this.vectorNorm.get(i));
