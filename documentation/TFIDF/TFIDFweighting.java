@@ -68,21 +68,21 @@ public class TFIDFweighting extends DocumentWeighting{
 		int i=0;
 		for(TF prin : this.terms_all_document)
 		{
-			TF newT = new TF();
-			newT.SetTerm(prin.GetTerm());
+			TF newTF = new TF();
+			newTF.SetTerm(prin.GetTerm());
 			for(int j=0;j<len;j++)
 			{
-				if(termDoc[j].compareTo(newT.GetTerm())==0)
+				if(termDoc[j].compareTo(newTF.GetTerm())==0)
 				{
-					newT.IncrementFrequency();
+					newTF.IncrementFrequency();
 				}
 			}
-			if(newT.GetFrequency()>0)
+			if(newTF.GetFrequency()>0)
 			{
 				document_frequency.set(i,document_frequency.get(i)+1);
 			}
 			i++;
-			res.add(newT);
+			res.add(newTF);
 		}
 		return res;
 	}
@@ -184,13 +184,11 @@ public class TFIDFweighting extends DocumentWeighting{
 			ArrayList<Double> key_weight_norm = this.calculate_weight_normalization(this.keyword_weight);
 			double a=0.0;
 			int j = 0;
-			vector_normalization(key_weight_norm);
 			for(Double wdn : doc_weight_norm)
 			{
 				a += (wdn.doubleValue() * key_weight_norm.get(j));
 				j++;
 			}
-			
 			this.cos[index_document] = a / Math.sqrt(vector_normalization(doc_weight_norm)*vector_normalization(key_weight_norm));
 			return true;
 		}else
